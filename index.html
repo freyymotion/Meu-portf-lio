@@ -1,0 +1,604 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>FREYY.MOTION</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: preto e branco puro. Azul, vermelho, roxo e violeta aparecem só como efeito (faixa, números, destaques). Vídeos numa fila horizontal com arrastar. */
+:root {
+  --bg: #08080A;
+  --surface: #111114;
+  --fg: #F4F4F5;
+  --muted: #8E8E96;
+  --line: #242429;
+  --blue: #4D7CFF;
+  --red: #FF4D4D;
+  --purple: #B14DFF;
+  --violet: #7458FF;
+  --font-display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #F6F6F7;
+    --surface: #FFFFFF;
+    --fg: #0A0A0C;
+    --muted: #5C5C66;
+    --line: #DCDCE0;
+    --blue: #1F4FE0;
+    --red: #D62828;
+    --purple: #8F2BD6;
+    --violet: #5535D6;
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #F6F6F7;
+  --surface: #FFFFFF;
+  --fg: #0A0A0C;
+  --muted: #5C5C66;
+  --line: #DCDCE0;
+  --blue: #1F4FE0;
+  --red: #D62828;
+  --purple: #8F2BD6;
+  --violet: #5535D6;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font: 400 1rem/1.6 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--violet); outline-offset: 3px; border-radius: 4px; }
+
+.wrap { max-width: 1080px; margin-inline: auto; padding-inline: 20px; }
+section { padding-block: 72px; scroll-margin-top: 64px; }
+
+h1, h2, h3 { font-family: var(--font-display); font-weight: 800; margin: 0; text-wrap: balance; letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.75rem, 5vw, 2.75rem); line-height: 1.08; }
+h3 { font-size: 1.125rem; line-height: 1.25; letter-spacing: -0.01em; }
+p { margin: 0; }
+.eyebrow { font: 500 0.75rem/1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.lede { font-size: 1.125rem; color: var(--muted); max-width: 54ch; }
+
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 60px; }
+.brand { text-decoration: none; font: 800 1rem var(--font-display); letter-spacing: 0.02em; }
+.brand span { color: var(--violet); }
+.nav { display: none; gap: 24px; }
+.nav a { text-decoration: none; color: var(--muted); font-weight: 500; font-size: 0.9375rem; }
+.nav a:hover { color: var(--fg); }
+@media (min-width: 820px) { .nav { display: flex; } }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 0 20px; border-radius: 4px; border: 1px solid var(--line); background: transparent; color: var(--fg); font: 600 0.9375rem var(--font-body); text-decoration: none; cursor: pointer; }
+.btn:hover { border-color: var(--fg); }
+.btn-primary { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.btn-primary:hover { background: var(--violet); border-color: var(--violet); color: #fff; }
+.btn-sm { min-height: 38px; padding: 0 14px; font-size: 0.875rem; }
+.btn[aria-disabled="true"] { cursor: not-allowed; color: var(--muted); border-style: dashed; }
+.btn[aria-disabled="true"]:hover { border-color: var(--line); }
+
+.hero { position: relative; overflow: hidden; padding-block: 64px 72px; }
+.url { font: 500 0.875rem var(--font-mono); color: var(--muted); letter-spacing: 0.04em; }
+.hero h1 { margin-top: 0; font-size: clamp(2.2rem, 11vw, 6.5rem); line-height: 1; letter-spacing: -0.03em; text-transform: uppercase; max-width: 100%; }
+.hero .wrap { position: relative; z-index: 1; }
+.hero-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: var(--fade, 1); }
+.hero-bg svg { position: absolute; top: 50%; right: -12%; width: min(110vw, 640px); height: auto; transform: translateY(-50%); fill: var(--fg); opacity: 0.2; }
+.hero-bg::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 15%, var(--bg) 100%); }
+.tagline { margin-top: 28px; font: 500 clamp(1.25rem, 3.2vw, 1.75rem)/1.35 var(--font-body); letter-spacing: -0.01em; color: var(--fg); max-width: 30ch; text-wrap: balance; }
+.hero .lede { margin-top: 20px; font-size: 1rem; line-height: 1.7; max-width: 50ch; }
+.hero .cta { margin-top: 36px; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+
+.sec-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 16px; margin-bottom: 8px; }
+.sec-sub { color: var(--muted); margin-bottom: 24px; }
+.rail-ctrl { display: flex; align-items: center; gap: 12px; }
+.count { font: 500 0.8125rem var(--font-mono); letter-spacing: 0.06em; color: var(--muted); font-variant-numeric: tabular-nums; }
+.arrow { width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line); background: transparent; color: var(--fg); font-size: 1.125rem; cursor: pointer; display: grid; place-items: center; }
+.arrow:hover:not(:disabled) { border-color: var(--fg); }
+.arrow:disabled { opacity: 0.35; cursor: default; }
+
+/* fila de vídeos: arrasta pro lado no celular, setas no computador */
+.rail { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; margin-inline: -20px; --cw: min(74vw, 300px); padding: 4px 20px 16px; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.rail::-webkit-scrollbar { display: none; }
+.card { position: relative; flex: 0 0 var(--cw); scroll-snap-align: center; transition: transform 0.3s; display: block; padding: 0; text-align: left; font: inherit; color: inherit; cursor: pointer; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.card:hover { border-color: var(--track); }
+.card::after { content: ""; position: absolute; inset: 0; background: #000; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+.rail.looping .card { transform: scale(0.93); }
+.rail.looping .card.is-active { transform: none; }
+.rail.looping .card:not(.is-active)::after { opacity: 0.66; }
+.poster { position: relative; aspect-ratio: 3 / 4; max-width: 100%; background: color-mix(in srgb, var(--track) 22%, var(--surface)); display: grid; place-items: center; }
+.play { width: 56px; height: 56px; border-radius: 50%; background: var(--bg); display: grid; place-items: center; transition: background 0.15s; }
+.play::before { content: ""; margin-left: 4px; border-top: 9px solid transparent; border-bottom: 9px solid transparent; border-left: 14px solid var(--fg); transition: border-left-color 0.15s; }
+.card:hover .play { background: var(--track); }
+.card:hover .play::before { border-left-color: #fff; }
+.card-body { padding: 16px 18px 20px; display: flex; flex-direction: column; gap: 8px; }
+.num { font: 500 0.8125rem var(--font-mono); letter-spacing: 0.08em; color: var(--track); font-variant-numeric: tabular-nums; }
+.card-body p { font-size: 0.9375rem; color: var(--muted); }
+.spec { align-self: flex-start; padding: 2px 8px; border: 1px solid var(--line); border-radius: 3px; font: 500 0.6875rem var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.c-blue { --track: var(--blue); }
+.c-red { --track: var(--red); }
+.c-purple { --track: var(--purple); }
+.c-violet { --track: var(--violet); }
+
+body.lock { overflow: hidden; }
+.modal { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 16px; background: rgba(0, 0, 0, 0.88); }
+.modal-box { width: 100%; max-width: 960px; max-height: 100%; overflow: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 16px; display: grid; gap: 12px; }
+.modal-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.modal-head h3 { min-width: 0; }
+.player { --ar: 9 / 16; --arn: 0.5625; aspect-ratio: var(--ar); width: min(100%, calc(70vh * var(--arn))); width: min(100%, calc(70dvh * var(--arn))); margin-inline: auto; background: #000; border-radius: 4px; overflow: hidden; display: grid; place-items: center; }
+.player iframe { width: 100%; height: 100%; border: 0; display: block; background: #000; }
+.player .empty { padding: 20px; text-align: center; color: #C9CED8; font: 500 0.8125rem var(--font-mono); }
+.modal-foot { font-size: 0.875rem; color: var(--muted); }
+.modal-foot:empty { display: none; }
+
+.about { display: grid; gap: 48px; }
+.about-main { min-width: 0; }
+.about-main h2 { margin-top: 12px; font-size: clamp(2.2rem, 7vw, 4rem); line-height: 1; }
+.stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 32px; }
+.stat { padding: 18px 16px 20px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+.stat .big { display: block; font: 800 clamp(3.5rem, 13vw, 5.5rem)/0.9 var(--font-display); letter-spacing: -0.04em; color: var(--track); font-variant-numeric: tabular-nums; }
+.stat .lbl { display: block; margin-top: 12px; font: 500 0.75rem/1.4 var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.about-text { margin-top: 28px; display: grid; gap: 16px; max-width: 52ch; }
+.about-text .lead { font: 700 clamp(1.2rem, 3.2vw, 1.5rem)/1.3 var(--font-display); letter-spacing: -0.01em; }
+.deliver { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.deliver li { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--track); color: var(--track); font: 500 0.8125rem var(--font-mono); letter-spacing: 0.04em; }
+.chat { min-width: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); overflow: hidden; align-self: start; }
+.chat-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--line); font: 500 0.75rem var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.chat-top b { display: inline-flex; align-items: center; gap: 8px; font-weight: 500; color: var(--fg); }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--violet); }
+.chat-body { display: grid; gap: 10px; padding: 18px 16px; }
+.bubble { max-width: 88%; padding: 10px 14px; border-radius: 14px; font-size: 0.9375rem; line-height: 1.45; overflow-wrap: anywhere; }
+.bubble.in { justify-self: start; background: color-mix(in srgb, var(--fg) 9%, transparent); border-bottom-left-radius: 4px; }
+.bubble.out { justify-self: end; background: var(--fg); color: var(--bg); border-bottom-right-radius: 4px; }
+.chat-foot { padding: 14px 16px; border-top: 1px solid var(--line); font-size: 0.875rem; color: var(--muted); }
+@media (min-width: 880px) { .about { grid-template-columns: 1.15fr 0.85fr; gap: 64px; align-items: start; } }
+
+.steps { list-style: none; margin: 32px 0 0; padding: 0; border-bottom: 1px solid var(--line); }
+.steps li { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 16px; padding-block: 24px; border-top: 1px solid var(--line); }
+.step-n { padding-top: 4px; font: 500 0.75rem var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--track); }
+.steps p { margin-top: 6px; color: var(--muted); max-width: 56ch; }
+
+.plans { display: grid; gap: 20px; margin-top: 36px; }
+@media (min-width: 720px) { .plans { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.plan { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; padding: 24px; text-align: left; font: inherit; color: inherit; cursor: pointer; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+.plan:hover { border-color: var(--muted); }
+.plan[aria-pressed="true"] { border-color: var(--violet); box-shadow: inset 0 0 0 1px var(--violet); }
+.plan .name { font: 800 1.125rem var(--font-display); letter-spacing: -0.01em; }
+.badge { position: absolute; top: -12px; left: 20px; padding: 3px 10px; border-radius: 3px; background: var(--violet); color: #fff; font: 500 0.6875rem var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; }
+.from { font: 500 0.75rem var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.price { font: 800 clamp(2rem, 6vw, 2.75rem)/1 var(--font-display); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.plan .desc { color: var(--muted); }
+.plan .when { margin-top: auto; padding-top: 12px; width: 100%; border-top: 1px solid var(--line); font-size: 0.9375rem; }
+.pick { margin-top: 4px; font: 600 0.875rem var(--font-body); color: var(--violet); }
+.plan[aria-pressed="true"] .pick::before { content: "Selecionado ✓"; }
+.plan[aria-pressed="false"] .pick::before { content: "Escolher este plano →"; }
+.note { margin-top: 20px; color: var(--muted); font-size: 0.875rem; }
+
+.send { margin-top: 24px; padding: 20px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); display: grid; gap: 14px; }
+.send h3 { font-size: 1.0625rem; }
+.msg { padding: 12px 14px; border: 1px dashed var(--line); border-radius: 4px; font: 500 0.875rem var(--font-mono); overflow-wrap: anywhere; }
+.send .cta { margin-top: 0; }
+.hint { color: var(--muted); font-size: 0.875rem; }
+.copied { font: 500 0.75rem var(--font-mono); color: var(--muted); }
+
+.contact { border-top: 1px solid var(--line); }
+.contact .lede { margin-top: 16px; }
+.foot { padding-block: 36px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.875rem; }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#inicio">FREYY<span>.</span>MOTION</a>
+    <nav class="nav" aria-label="Seções">
+      <a href="#portfolio">Portfólio</a>
+      <a href="#sobre">Sobre</a>
+      <a href="#como">Como funciona</a>
+      <a href="#investimento">Investimento</a>
+    </nav>
+    <a class="btn btn-primary btn-sm" href="#contato">Contato</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="inicio">
+    <div class="hero-bg" aria-hidden="true">
+      <svg viewBox="-100 -100 200 200" xmlns="http://www.w3.org/2000/svg"><polygon points="0,-100 13.01,-31.41 70.71,-70.71 31.41,-13.01 100,0 31.41,13.01 70.71,70.71 13.01,31.41 0,100 -13.01,31.41 -70.71,70.71 -31.41,13.01 -100,0 -31.41,-13.01 -70.71,-70.71 -13.01,-31.41"/></svg>
+    </div>
+    <div class="wrap">
+      <h1>FREYY.MOTION</h1>
+      <p class="tagline">Roteiro, locução e motion em um só anúncio, pronto pra vender.</p>
+      <p class="lede">Crio anúncios em vídeo para Reels, TikTok e Shorts, voltados a quem vende comunidades no Discord, infoprodutos e SaaS. A entrega já vem com voz, som e legenda.</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="#portfolio">Ver portfólio</a>
+        <a class="btn" data-wa href="#contato">Chamar no WhatsApp</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="portfolio">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Projetos selecionados</h2>
+        <div class="rail-ctrl">
+          <span class="count" id="count" aria-live="polite"></span>
+          <button class="arrow" id="prev" type="button" aria-label="Anterior">←</button>
+          <button class="arrow" id="next" type="button" aria-label="Próximo">→</button>
+        </div>
+      </div>
+      <p class="sec-sub">Arraste pro lado e toque no anúncio do centro para assistir.</p>
+      <div class="rail" id="rail" tabindex="0" aria-label="Anúncios do portfólio"></div>
+    </div>
+  </section>
+
+  <section id="sobre">
+    <div class="wrap about">
+      <div class="about-main">
+        <p class="eyebrow">Sobre</p>
+        <h2>Sou o João, FREYY.</h2>
+        <div class="stats">
+          <div class="stat c-blue"><span class="big">4</span><span class="lbl">anos de edição</span></div>
+          <div class="stat c-violet"><span class="big">1</span><span class="lbl">ano focado em motion design</span></div>
+        </div>
+        <div class="about-text">
+          <p class="lead">Crio anúncios completos: roteiro, locução, animação e legendas.</p>
+          <ul class="deliver" aria-label="O que vem no anúncio">
+            <li class="c-blue">Roteiro</li>
+            <li class="c-red">Locução</li>
+            <li class="c-purple">Animação</li>
+            <li class="c-violet">Legendas</li>
+          </ul>
+          <p>Você me manda o produto. Eu te entrego o anúncio pronto pra postar.</p>
+        </div>
+      </div>
+      <div class="chat" aria-label="Exemplo de conversa">
+        <div class="chat-top"><b><span class="dot" aria-hidden="true"></span>FREYY.MOTION</b><span>Exemplo</span></div>
+        <div class="chat-body">
+          <div class="bubble in">Fala Freyy, quero um ad pra [meu produto]</div>
+          <div class="bubble out">Fechou. Me manda o produto e 1 referência. Áudio de 1 min resolve.</div>
+          <div class="bubble in">Mandei.</div>
+          <div class="bubble out">Anúncio pronto pra postar em 3-4 dias úteis.</div>
+        </div>
+        <div class="chat-foot">Atendimento realizado exclusivamente por mensagem.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="como">
+    <div class="wrap">
+      <p class="eyebrow">Como funciona</p>
+      <h2 style="margin-top:12px">Do briefing ao anúncio no ar</h2>
+      <ol class="steps">
+        <li class="c-blue"><span class="step-n">Passo 1</span><div><h3>Briefing</h3><p>Você me manda no WhatsApp o que vende + 1 referência. Áudio de 1 min resolve.</p></div></li>
+        <li class="c-red"><span class="step-n">Passo 2</span><div><h3>Criação</h3><p>Eu crio roteiro, voz e motion. 1 ad em 3-4 dias úteis.</p></div></li>
+        <li class="c-purple"><span class="step-n">Passo 3</span><div><h3>Ajuste</h3><p>1 ajuste fino incluso por vídeo (cor, texto, tempo). Extra: R$50.</p></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="investimento">
+    <div class="wrap">
+      <p class="eyebrow">Investimento</p>
+      <h2 style="margin-top:12px">Escolha o seu plano</h2>
+      <div class="plans" id="plans">
+        <button class="plan" type="button" data-plan="Ad Único" aria-pressed="false">
+          <span class="name">Ad Único</span>
+          <span><span class="from">A partir de</span><br><span class="price">R$197</span></span>
+          <span class="desc">Roteiro + Locução + Motion + Legenda.</span>
+          <span class="when">Entrega em 3-4 dias úteis.</span>
+          <span class="pick"></span>
+        </button>
+        <button class="plan" type="button" data-plan="Pack 3 Ads" aria-pressed="false">
+          <span class="badge">Mais pedido</span>
+          <span class="name">Pack 3 Ads</span>
+          <span><span class="from">A partir de</span><br><span class="price">R$497</span></span>
+          <span class="desc">3 anúncios completos, prontos pra rodar. 1 ajuste por vídeo.</span>
+          <span class="when">Entrega escalonada em até 10 dias úteis (te mando 1 por vez).</span>
+          <span class="pick"></span>
+        </button>
+      </div>
+      <p class="note">*Valores base com material enviado. Projetos complexos sob consulta.</p>
+
+      <div class="send" id="send">
+        <p class="hint" id="sendHint">Toque em um plano para escolher onde mandar a mensagem.</p>
+        <div id="sendBody" hidden>
+          <h3 id="sendTitle"></h3>
+          <p class="msg" id="sendMsg" style="margin-top:12px"></p>
+          <div class="cta">
+            <a class="btn btn-primary" id="sendWa" href="#investimento">Mandar no WhatsApp</a>
+            <a class="btn" id="sendIg" href="https://ig.me/m/freyy.motion" target="_blank" rel="noopener">Mandar no Instagram ↗</a>
+            <button class="btn" id="sendCopy" type="button">Copiar mensagem</button>
+            <span class="copied" id="copied" role="status" aria-live="polite"></span>
+          </div>
+          <p class="hint" style="margin-top:12px" id="sendNote"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contato">
+    <div class="wrap">
+      <p class="eyebrow">Contato</p>
+      <h2 style="margin-top:12px;max-width:16ch">Bora fazer seu anúncio?</h2>
+      <p class="lede">Me chama e já abre com a mensagem pronta: "Fala Freyy, quero um ad pra [meu produto]".</p>
+      <div class="cta">
+        <a class="btn btn-primary" data-wa href="#contato">Chamar no WhatsApp</a>
+        <a class="btn" href="https://instagram.com/freyy.motion" target="_blank" rel="noopener">Instagram @freyy.motion ↗</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">© 2026 FREYY.MOTION</div>
+</footer>
+
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="mtitle">
+  <div class="modal-box">
+    <div class="modal-head"><h3 id="mtitle"></h3><button class="btn btn-sm" id="mclose" type="button">Fechar</button></div>
+    <div class="player" id="player"></div>
+    <div class="modal-foot" id="mfoot"></div>
+  </div>
+</div>
+
+<script>
+// WHATS: número com DDI e DDD, só dígitos (ex.: '5585999999999'). Enquanto estiver vazio, os botões de WhatsApp levam ao Instagram.
+var WHATS = '';
+var DEFAULT_MSG = 'Fala Freyy, quero um ad pra [meu produto]';
+
+// yt: código do vídeo no YouTube (a parte depois de /shorts/ no link)
+var PROJECTS = [
+  { n: '01', title: 'Nova', focus: 'Player de música com presets de equalização', format: '9:16', yt: 'qnVQjLRLDcQ', tone: 'c-blue' },
+  { n: '02', title: 'Vanta', focus: 'Analisador de vulnerabilidades de rede', format: '9:16', yt: 'bEdu4Jk2VvY', tone: 'c-red' },
+  { n: '03', title: 'FocusMode', focus: 'App de foco que oculta abas', format: '9:16', yt: 'Jk0iE6qvjGE', tone: 'c-purple' },
+  { n: '04', title: 'Flygo', focus: 'App que acha aeroportos mais baratos', format: '9:16', yt: 'LIaffrFSQXw', tone: 'c-violet' }
+];
+
+function waUrl(msg) { return 'https://wa.me/' + WHATS + '?text=' + encodeURIComponent(msg); }
+
+Array.prototype.forEach.call(document.querySelectorAll('[data-wa]'), function (a) {
+  if (WHATS) {
+    a.href = waUrl(DEFAULT_MSG);
+  } else {
+    a.href = 'https://ig.me/m/freyy.motion';
+    a.textContent = 'Chamar no Instagram';
+  }
+  a.target = '_blank';
+  a.rel = 'noopener';
+});
+
+/* fila de vídeos */
+var rail = document.getElementById('rail');
+var prevBtn = document.getElementById('prev');
+var nextBtn = document.getElementById('next');
+var countEl = document.getElementById('count');
+
+var N = PROJECTS.length;
+var looping = false;
+var setW = 0;
+var step = 316;
+var jumpTimer = null;
+var lastW = 0;
+
+function two(n) { return n < 10 ? '0' + n : '' + n; }
+
+function cardHtml(p, i, live) {
+  return '<button class="card ' + p.tone + '" type="button" data-i="' + i + '"' +
+    (live ? ' aria-label="Assistir: ' + p.title + '"' : ' tabindex="-1" aria-hidden="true"') + '>' +
+    '<div class="poster"><span class="play" aria-hidden="true"></span></div>' +
+    '<div class="card-body"><span class="num">' + p.n + '</span><h3>' + p.title + '</h3>' +
+    (p.focus ? '<p>' + p.focus + '</p>' : '') +
+    (p.focus ? '<span class="spec">Spec ad</span>' : '') + '</div></button>';
+}
+
+function render(copies) {
+  var html = '';
+  for (var c = 0; c < copies; c++) {
+    for (var i = 0; i < N; i++) html += cardHtml(PROJECTS[i], i, c === (copies === 3 ? 1 : 0));
+  }
+  rail.innerHTML = html;
+}
+
+function silentJump(x) {
+  rail.style.scrollSnapType = 'none';
+  rail.scrollLeft = x;
+  requestAnimationFrame(function () { rail.style.scrollSnapType = ''; });
+}
+
+function build() {
+  render(1);
+  var cards = rail.querySelectorAll('.card');
+  step = cards[0].getBoundingClientRect().width + 16;
+  looping = N * step - 16 > rail.clientWidth + 1;
+  prevBtn.hidden = nextBtn.hidden = !looping;
+  if (looping) {
+    var cw = cards[0].getBoundingClientRect().width;
+    rail.style.paddingInline = Math.max(20, (rail.clientWidth - cw) / 2) + 'px';
+    render(3);
+    cards = rail.querySelectorAll('.card');
+    setW = cards[N].offsetLeft - cards[0].offsetLeft;
+    silentJump(setW);
+  } else {
+    rail.style.paddingInline = '';
+    setW = 0;
+  }
+  rail.classList.toggle('looping', looping);
+  lastW = window.innerWidth;
+  updateCount();
+}
+
+function updateCount() {
+  if (!looping) { countEl.textContent = N + ' anúncios'; return; }
+  var rr = rail.getBoundingClientRect();
+  var mid = rr.left + rr.width / 2;
+  var cards = rail.querySelectorAll('.card');
+  var best = null, bestD = Infinity;
+  for (var k = 0; k < cards.length; k++) {
+    var r = cards[k].getBoundingClientRect();
+    var d = Math.abs(r.left + r.width / 2 - mid);
+    if (d < bestD) { bestD = d; best = cards[k]; }
+  }
+  for (var j = 0; j < cards.length; j++) cards[j].classList.toggle('is-active', cards[j] === best);
+  countEl.textContent = two(+best.getAttribute('data-i') + 1) + ' / ' + two(N);
+}
+
+function normalize() {
+  if (!looping) return;
+  if (rail.scrollLeft < setW * 0.5) silentJump(rail.scrollLeft + setW);
+  else if (rail.scrollLeft >= setW * 1.5) silentJump(rail.scrollLeft - setW);
+}
+
+rail.addEventListener('scroll', function () {
+  updateCount();
+  if (!looping) return;
+  var max = rail.scrollWidth - rail.clientWidth;
+  if (rail.scrollLeft < 8) silentJump(rail.scrollLeft + setW);
+  else if (rail.scrollLeft > max - 8) silentJump(rail.scrollLeft - setW);
+  clearTimeout(jumpTimer);
+  jumpTimer = setTimeout(normalize, 140);
+}, { passive: true });
+
+prevBtn.addEventListener('click', function () { rail.scrollBy({ left: -step, behavior: 'smooth' }); });
+nextBtn.addEventListener('click', function () { rail.scrollBy({ left: step, behavior: 'smooth' }); });
+rail.addEventListener('keydown', function (e) {
+  if (e.key === 'ArrowRight') { rail.scrollBy({ left: step, behavior: 'smooth' }); }
+  if (e.key === 'ArrowLeft') { rail.scrollBy({ left: -step, behavior: 'smooth' }); }
+});
+window.addEventListener('resize', function () {
+  if (window.innerWidth !== lastW) build();
+});
+build();
+
+/* player */
+var modal = document.getElementById('modal');
+var player = document.getElementById('player');
+var mtitle = document.getElementById('mtitle');
+var mfoot = document.getElementById('mfoot');
+var lastFocus = null;
+
+function ratio(f) {
+  var a = String(f).split(':'), w = +a[0], h = +a[1];
+  if (!w || !h) { w = 9; h = 16; }
+  return { ar: w + ' / ' + h, n: w / h };
+}
+
+function openPlayer(p) {
+  lastFocus = document.activeElement;
+  var r = ratio(p.format);
+  player.style.setProperty('--ar', r.ar);
+  player.style.setProperty('--arn', r.n);
+  mtitle.textContent = p.title;
+  mfoot.innerHTML = '';
+  player.innerHTML = '';
+  if (p.yt) {
+    var f = document.createElement('iframe');
+    f.src = 'https://www.youtube-nocookie.com/embed/' + p.yt + '?autoplay=1&rel=0&playsinline=1';
+    f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    f.allowFullscreen = true;
+    f.title = p.title;
+    player.appendChild(f);
+    mfoot.innerHTML = '<a href="https://www.youtube.com/shorts/' + p.yt + '" target="_blank" rel="noopener">Abrir no YouTube ↗</a>';
+  } else {
+    player.innerHTML = '<p class="empty">Vídeo ainda não adicionado.</p>';
+  }
+  modal.hidden = false;
+  document.body.classList.add('lock');
+  document.getElementById('mclose').focus();
+}
+
+function closePlayer() {
+  player.innerHTML = '';
+  modal.hidden = true;
+  document.body.classList.remove('lock');
+  if (lastFocus && lastFocus.focus) lastFocus.focus();
+}
+
+rail.addEventListener('click', function (e) {
+  var c = e.target.closest('.card');
+  if (!c) return;
+  if (looping && !c.classList.contains('is-active')) {
+    c.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    return;
+  }
+  openPlayer(PROJECTS[+c.getAttribute('data-i')]);
+});
+document.getElementById('mclose').addEventListener('click', closePlayer);
+modal.addEventListener('click', function (e) { if (e.target === modal) closePlayer(); });
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.hidden) closePlayer(); });
+
+/* escolha de plano */
+var plansEl = document.getElementById('plans');
+var sendBody = document.getElementById('sendBody');
+var sendHint = document.getElementById('sendHint');
+var sendTitle = document.getElementById('sendTitle');
+var sendMsg = document.getElementById('sendMsg');
+var sendWa = document.getElementById('sendWa');
+var sendNote = document.getElementById('sendNote');
+var copiedEl = document.getElementById('copied');
+var currentMsg = '';
+
+function pickPlan(name) {
+  currentMsg = 'Fala Freyy, quero o ' + name + ' pra [meu produto]';
+  Array.prototype.forEach.call(plansEl.querySelectorAll('.plan'), function (b) {
+    b.setAttribute('aria-pressed', b.getAttribute('data-plan') === name ? 'true' : 'false');
+  });
+  sendTitle.textContent = name + ': onde você quer mandar a mensagem?';
+  sendMsg.textContent = currentMsg;
+  copiedEl.textContent = '';
+  if (WHATS) {
+    sendWa.href = waUrl(currentMsg);
+    sendWa.target = '_blank';
+    sendWa.rel = 'noopener';
+    sendWa.removeAttribute('aria-disabled');
+    sendNote.textContent = 'No WhatsApp a mensagem já abre pronta. No Instagram, copie a mensagem e cole na conversa.';
+  } else {
+    sendWa.removeAttribute('href');
+    sendWa.removeAttribute('target');
+    sendWa.setAttribute('aria-disabled', 'true');
+    sendWa.className = 'btn';
+    sendWa.textContent = 'WhatsApp em breve';
+    sendNote.textContent = 'Por enquanto o atendimento é pelo Instagram. Copie a mensagem e cole na conversa.';
+  }
+  sendHint.hidden = true;
+  sendBody.hidden = false;
+}
+
+plansEl.addEventListener('click', function (e) {
+  var b = e.target.closest('.plan');
+  if (b) pickPlan(b.getAttribute('data-plan'));
+});
+sendWa.addEventListener('click', function (e) {
+  if (sendWa.getAttribute('aria-disabled') === 'true') e.preventDefault();
+});
+
+document.getElementById('sendCopy').addEventListener('click', function () {
+  function done() { copiedEl.textContent = 'Copiado'; setTimeout(function () { copiedEl.textContent = ''; }, 1800); }
+  function fallback() {
+    var r = document.createRange(); r.selectNodeContents(sendMsg);
+    var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+    copiedEl.textContent = 'Mensagem selecionada';
+  }
+  try { navigator.clipboard.writeText(currentMsg).then(done, fallback); } catch (err) { fallback(); }
+});
+
+/* estrela do fundo some ao rolar */
+var heroEl = document.getElementById('inicio');
+var starEl = heroEl.querySelector('.hero-bg');
+function fadeStar() {
+  var h = heroEl.offsetHeight || 1;
+  starEl.style.setProperty('--fade', Math.max(0, 1 - window.scrollY / (h * 0.7)));
+}
+window.addEventListener('scroll', fadeStar, { passive: true });
+fadeStar();
+</script>
+
+</body></html>
