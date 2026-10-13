@@ -189,6 +189,13 @@ body.lock { overflow: hidden; }
 .hint { color: var(--muted); font-size: 0.875rem; }
 .copied { font: 500 0.75rem var(--font-mono); color: var(--muted); }
 
+.faq { margin-top: 32px; border-bottom: 1px solid var(--line); }
+.faq details { border-top: 1px solid var(--line); }
+.faq summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 20px; font: 700 1.0625rem/1.3 var(--font-display); letter-spacing: -0.01em; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; flex: none; font: 400 1.5rem/1 var(--font-body); color: var(--muted); }
+.faq details[open] summary::after { content: "−"; color: var(--violet); }
+.faq details p { padding-bottom: 22px; color: var(--muted); max-width: 60ch; }
 .contact { border-top: 1px solid var(--line); }
 .contact .lede { margin-top: 16px; }
 .foot { padding-block: 36px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.875rem; }
@@ -204,6 +211,7 @@ body.lock { overflow: hidden; }
       <a href="#sobre">Sobre</a>
       <a href="#como">Como funciona</a>
       <a href="#investimento">Investimento</a>
+      <a href="#duvidas">Dúvidas</a>
     </nav>
     <a class="btn btn-primary btn-sm" href="#contato">Contato</a>
   </div>
@@ -325,6 +333,43 @@ body.lock { overflow: hidden; }
     </div>
   </section>
 
+  <section id="duvidas">
+    <div class="wrap">
+      <p class="eyebrow">Dúvidas</p>
+      <h2 style="margin-top:12px">Perguntas frequentes</h2>
+      <div class="faq">
+        <details>
+          <summary>Como funciona o pagamento?</summary>
+          <p>O pagamento é por Pix. Você pode pagar em duas partes de 50% ou o valor inteiro de uma vez.</p>
+        </details>
+        <details>
+          <summary>Em qual formato o vídeo é entregue?</summary>
+          <p>Arquivo MP4 em 1080p e 30 fps, pronto pra postar.</p>
+        </details>
+        <details>
+          <summary>A locução é gravada por uma pessoa?</summary>
+          <p>Não. A locução é feita com voz de IA.</p>
+        </details>
+        <details>
+          <summary>Quantos ajustes estão inclusos?</summary>
+          <p>1 ajuste fino por vídeo (cor, texto ou tempo). Cada ajuste extra custa R$50.</p>
+        </details>
+        <details>
+          <summary>Quanto tempo leva?</summary>
+          <p>O Ad Único leva de 3 a 4 dias úteis. O Pack 3 Ads leva até 10 dias úteis, e eu te mando 1 vídeo por vez.</p>
+        </details>
+        <details>
+          <summary>Como é o atendimento?</summary>
+          <p>Só por mensagem, sem call. Você me manda o que vende e 1 referência. Um áudio de 1 minuto já resolve.</p>
+        </details>
+        <details>
+          <summary>E se o meu projeto for mais complexo?</summary>
+          <p>Os valores são base e valem com o material enviado por você. Projetos complexos são sob consulta.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
   <section class="contact" id="contato">
     <div class="wrap">
       <p class="eyebrow">Contato</p>
@@ -403,7 +448,7 @@ function cardHtml(p, i, live) {
 function render(copies) {
   var html = '';
   for (var c = 0; c < copies; c++) {
-    for (var i = 0; i < N; i++) html += cardHtml(PROJECTS[i], i, c === (copies === 3 ? 1 : 0));
+    for (var i = 0; i < N; i++) html += cardHtml(PROJECTS[i], i, c === (copies - 1) / 2);
   }
   rail.innerHTML = html;
 }
@@ -423,10 +468,10 @@ function build() {
   if (looping) {
     var cw = cards[0].getBoundingClientRect().width;
     rail.style.paddingInline = Math.max(20, (rail.clientWidth - cw) / 2) + 'px';
-    render(3);
+    render(5);
     cards = rail.querySelectorAll('.card');
     setW = cards[N].offsetLeft - cards[0].offsetLeft;
-    silentJump(setW);
+    silentJump(setW * 2);
   } else {
     rail.style.paddingInline = '';
     setW = 0;
@@ -451,21 +496,28 @@ function updateCount() {
   countEl.textContent = two(+best.getAttribute('data-i') + 1) + ' / ' + two(N);
 }
 
+var touching = false;
+
+/* só reposiciona a fila com o dedo fora da tela e a rolagem parada */
 function normalize() {
-  if (!looping) return;
-  if (rail.scrollLeft < setW * 0.5) silentJump(rail.scrollLeft + setW);
-  else if (rail.scrollLeft >= setW * 1.5) silentJump(rail.scrollLeft - setW);
+  if (!looping || touching) return;
+  var x = rail.scrollLeft, lo = setW * 2 - step / 2, hi = setW * 3 - step / 2;
+  var y = x;
+  while (y < lo) y += setW;
+  while (y >= hi) y -= setW;
+  if (y !== x) silentJump(y);
 }
 
 rail.addEventListener('scroll', function () {
   updateCount();
   if (!looping) return;
-  var max = rail.scrollWidth - rail.clientWidth;
-  if (rail.scrollLeft < 8) silentJump(rail.scrollLeft + setW);
-  else if (rail.scrollLeft > max - 8) silentJump(rail.scrollLeft - setW);
   clearTimeout(jumpTimer);
-  jumpTimer = setTimeout(normalize, 140);
+  jumpTimer = setTimeout(normalize, 160);
 }, { passive: true });
+rail.addEventListener('touchstart', function () { touching = true; clearTimeout(jumpTimer); }, { passive: true });
+function releaseTouch() { touching = false; clearTimeout(jumpTimer); jumpTimer = setTimeout(normalize, 250); }
+rail.addEventListener('touchend', releaseTouch, { passive: true });
+rail.addEventListener('touchcancel', releaseTouch, { passive: true });
 
 prevBtn.addEventListener('click', function () { rail.scrollBy({ left: -step, behavior: 'smooth' }); });
 nextBtn.addEventListener('click', function () { rail.scrollBy({ left: step, behavior: 'smooth' }); });
